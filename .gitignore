@@ -1,0 +1,22 @@
+# Never commit game media or ROM dumps
+*.crt
+*.bin
+*.prg
+*.d64
+*.g64
+*.tap
+*.t64
+roms/
+
+# Build output
+build/
+build-*/
+out/
+.cache/
+compile_commands.json
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

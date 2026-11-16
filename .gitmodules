@@ -1,0 +1,3 @@
+[submodule "external/breadbin-6502"]
+	path = external/breadbin-6502
+	url = ../breadbin-6502

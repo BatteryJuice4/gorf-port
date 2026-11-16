@@ -1,0 +1,28 @@
+# Gorf game pack for Breadbin-6502 (format: external/breadbin-6502/docs/gamepack.md).
+# Verified against the owner's dump "Gorf (USA, Europe).crt".
+id    = "gorf"
+title = "Gorf"
+media = "cartridge"
+# The known dump is labelled "USA, Europe" and plays correctly on the PAL core.
+# Revisit once NTSC timing exists in the launcher.
+video_standard = "PAL"
+sid_model      = "6581"
+joystick_port  = 1            # verified: Gorf reads joystick port 1
+min_launcher_version = "0.1.0"
+
+[rom]
+cart_type  = "16k"            # standard 16K cartridge (hardware type 0, one 16K chip at $8000)
+known_sha1 = [
+    "4d24d5ed3d8b38235d9ae5965b675ffece0981cc",   # Gorf (USA, Europe).crt
+]
+
+[input.default]
+up    = "Up"
+down  = "Down"
+left  = "Left"
+right = "Right"
+fire  = ["Space", "LCtrl", "Gamepad_A"]   # gamepad names apply once the launcher supports gamepads
+
+[video]
+default_scale = 3
+crop_border   = true          # Gorf draws nothing in the border
