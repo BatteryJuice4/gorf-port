@@ -3,12 +3,11 @@
 id    = "gorf"
 title = "Gorf"
 media = "cartridge"
-# The known dump is labelled "USA, Europe" and plays correctly on the PAL core.
-# Revisit once NTSC timing exists in the launcher.
-video_standard = "PAL"
+# NTSC: chosen by the owner after comparing both (game and music speed feel right).
+video_standard = "NTSC"
 sid_model      = "6581"
 joystick_port  = 1            # verified: Gorf reads joystick port 1
-min_launcher_version = "0.1.0"
+min_launcher_version = "0.2.0"   # NTSC timing
 
 [rom]
 cart_type  = "16k"            # standard 16K cartridge (hardware type 0, one 16K chip at $8000)

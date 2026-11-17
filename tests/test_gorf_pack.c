@@ -46,7 +46,9 @@ int main(int argc, char** argv) {
     CHECK(gamepack_knows_sha1(&p, "4d24d5ed3d8b38235d9ae5965b675ffece0981cc"), "verified dump hash missing");
     CHECK(d.input.joystick_port == 1, "Gorf reads joystick port 1");
     CHECK(d.input.keys[INPUT_FIRE][0] == input_key_from_name("Space"), "fire on Space");
-    CHECK(gamepack_launcher_ok(&p, "0.1.0"), "pinned launcher too old for the pack");
+    CHECK(p.ntsc, "Gorf runs on an NTSC machine (owner's choice)");
+    CHECK(gamepack_launcher_ok(&p, "0.2.0"), "pinned launcher too old for the pack");
+    CHECK(!gamepack_launcher_ok(&p, "0.1.0"), "0.1.0 has no NTSC timing; the pack must require 0.2.0");
     if (failures == 0) printf("test_gorf_pack: all passed\n");
     return failures ? 1 : 0;
 }
