@@ -11,7 +11,7 @@ Repo-specific rules:
   mods), docs, and the branded build. Anything a game needs from the launcher is added
   to `breadbin-6502` as a generic, config-driven option, released, and then adopted here.
 - **The launcher is a submodule pinned to a tag** (`external/breadbin-6502`, currently
-  `v0.4.1`). Update deliberately: check out the new tag, rebuild, run the game with the
+  `v0.5.0`). Update deliberately: check out the new tag, rebuild, run the game with the
   owner's dump, then commit the submodule bump. Keep `min_launcher_version` in
   `game.toml` honest; CMake refuses older launchers.
 - **Never commit the ROM** or any game media (`.gitignore` covers `*.crt *.bin *.prg
