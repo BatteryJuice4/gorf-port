@@ -48,6 +48,18 @@ ctest --test-dir build      # checks the game pack, no ROM needed
 ./build/gorf
 ```
 
+Release packages (`gorf-<version>-<os>-<arch>`: a `.tar.gz` on Linux, a `.zip` with
+`gorf.exe` or `gorf.app` on Windows/macOS, plus a Linux AppImage). They contain no ROM:
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DGORF_BUILD_TESTS=OFF -DBB_SOURCE_URL=https://…
+cmake --build build --config Release
+(cd build && cpack -C Release)
+external/breadbin-6502/packaging/linux/make-appimage.sh build   # needs appimagetool
+```
+
+CI builds them for version tags.
+
 If you cloned without `--recursive`, run `git submodule update --init --recursive`.
 Build requirements are the launcher's (see `external/breadbin-6502/README.md`): CMake ≥ 3.20,
 a C11/C++17 compiler, and on Linux the X11, OpenGL, PulseAudio and D-Bus development

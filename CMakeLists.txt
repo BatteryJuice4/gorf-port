@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(gorf-port LANGUAGES C CXX)
+project(gorf-port VERSION 0.1.0 LANGUAGES C CXX)   # version of the Gorf release packages
 
 # Gorf, built as a branded Breadbin-6502 executable with the game pack embedded.
 # The launcher is a git submodule pinned to a tagged release.
@@ -15,6 +15,8 @@ endif()
 set(BB_GAMEPACK_DIR ${GORF_GAMEPACK_DIR} CACHE PATH "" FORCE)
 set(BB_OUTPUT_NAME "gorf" CACHE STRING "" FORCE)
 set(BB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(BB_PACKAGE_VERSION ${PROJECT_VERSION} CACHE STRING "" FORCE)
+set(BB_PACKAGE_README ${CMAKE_CURRENT_SOURCE_DIR}/README.md CACHE FILEPATH "" FORCE)
 
 # Put the executable at the top of the build folder.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

@@ -7,7 +7,7 @@ media = "cartridge"
 video_standard = "NTSC"
 sid_model      = "6581"
 joystick_port  = 1            # verified: Gorf reads joystick port 1
-min_launcher_version = "0.3.0"   # NTSC timing (0.2.0), palette key (0.3.0)
+min_launcher_version = "0.4.0"   # NTSC timing (0.2.0), palette key (0.3.0), gamepad names (0.4.0)
 
 [rom]
 cart_type  = "16k"            # standard 16K cartridge (hardware type 0, one 16K chip at $8000)
@@ -20,7 +20,7 @@ up    = "Up"
 down  = "Down"
 left  = "Left"
 right = "Right"
-fire  = ["Space", "LCtrl", "Gamepad_A"]   # gamepad names apply once the launcher supports gamepads
+fire  = ["Space", "LCtrl", "Gamepad_A"]   # d-pad and left stick move (launcher default for gamepads)
 
 [video]
 default_scale = 3

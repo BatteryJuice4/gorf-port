@@ -35,25 +35,19 @@ int main(int argc, char** argv) {
     char err[256], warns[4096];
     CHECK(gamepack_parse(text, n, &p, &d, err, sizeof(err), warns, sizeof(warns)), "parse failed: %s", err);
 
-    // Only "gamepads aren't supported yet" notes are acceptable warnings.
-    for (const char* line = warns; *line;) {
-        const char* end = strchr(line, '\n');
-        size_t len = end ? (size_t)(end - line) : strlen(line);
-        char buf[512];
-        snprintf(buf, sizeof(buf), "%.*s", (int)len, line);
-        CHECK(strstr(buf, "gamepads aren't supported yet") != NULL, "unexpected warning: %s", buf);
-        line += len + (end ? 1 : 0);
-    }
+    CHECK(warns[0] == 0, "unexpected warnings:\n%s", warns);
 
     CHECK(!strcmp(p.id, "gorf") && !strcmp(p.title, "Gorf"), "id/title");
     CHECK(p.media == GAMEPACK_MEDIA_CARTRIDGE && p.cart_type == GAMEPACK_CART_16K, "16K cartridge");
     CHECK(gamepack_knows_sha1(&p, "4d24d5ed3d8b38235d9ae5965b675ffece0981cc"), "verified dump hash missing");
     CHECK(d.input.joystick_port == 1, "Gorf reads joystick port 1");
     CHECK(d.input.keys[INPUT_FIRE][0] == input_key_from_name("Space"), "fire on Space");
+    CHECK(d.input.keys[INPUT_FIRE][2] == input_key_from_name("Gamepad_A"), "fire on gamepad A");
+    CHECK(d.input.keys[INPUT_UP][1] == input_key_from_name("Gamepad_Up"), "d-pad up (launcher default)");
     CHECK(p.ntsc, "Gorf runs on an NTSC machine (owner's choice)");
     CHECK(!strcmp(d.video.palette, "colodore"), "palette \"%s\", want colodore", d.video.palette);
     CHECK(gamepack_launcher_ok(&p, GORF_PINNED_LAUNCHER), "pinned launcher %s too old for the pack", GORF_PINNED_LAUNCHER);
-    CHECK(!gamepack_launcher_ok(&p, "0.2.0"), "0.2.0 has no palette key; the pack must require 0.3.0");
+    CHECK(!gamepack_launcher_ok(&p, "0.3.0"), "0.3.0 has no gamepad names; the pack must require 0.4.0");
     if (failures == 0) printf("test_gorf_pack: all passed\n");
     return failures ? 1 : 0;
 }
