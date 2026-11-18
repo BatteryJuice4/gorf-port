@@ -20,3 +20,6 @@ compile_commands.json
 .idea/
 *.swp
 .DS_Store
+
+# Recompiled C is derived from the ROM: never commit it (docs/RECOMP_PLAN.md)
+generated/
