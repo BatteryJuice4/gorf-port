@@ -65,11 +65,30 @@ Build requirements are the launcher's (see `external/breadbin-6502/README.md`): 
 a C11/C++17 compiler, and on Linux the X11, OpenGL, PulseAudio and D-Bus development
 packages.
 
+## Optional: recompiled build
+
+Gorf's code can also run as C generated from your own ROM by
+[breadbin-recomp](https://github.com/BatteryJuice4/breadbin-recomp) (a submodule, pinned to
+a release tag). It plays exactly the same, frame for frame (same replays and save
+states), so this is mostly groundwork for future improvements:
+
+```sh
+cmake -S . -B build-recomp -DCMAKE_BUILD_TYPE=Release -DGORF_RECOMP=ON -DGORF_ROM=/path/to/Gorf.crt
+cmake --build build-recomp
+```
+
+The generator only accepts the known dump (SHA-1 above). The generated C lands in
+`build-recomp/generated/` and is derived from the ROM, so **a recompiled build is for you
+only**: don't commit, upload or share it (packaging is switched off for it). In the game,
+the ROM tab's "Recompiled code" checkbox switches between it and the interpreter.
+
 ## Layout
 
 ```
 gamepacks/gorf/     game pack: game.toml, icon.png, banner.png (built into the executable)
 external/breadbin-6502/   the launcher, a git submodule pinned to a release tag
+external/breadbin-recomp/ the recompiler (only used with GORF_RECOMP), pinned the same way
+recomp/hints.toml   what the recompiler can't work out alone (a jump table, the dump's SHA-1)
 tools/make_art.py   generates icon.png and banner.png (original, procedural art)
 tests/              game pack checks
 ```

@@ -11,7 +11,7 @@ Repo-specific rules:
   mods), docs, and the branded build. Anything a game needs from the launcher is added
   to `breadbin-6502` as a generic, config-driven option, released, and then adopted here.
 - **The launcher is a submodule pinned to a tag** (`external/breadbin-6502`, currently
-  `v0.6.0`). Update deliberately: check out the new tag, rebuild, run the game with the
+  `v0.9.0`). Update deliberately: check out the new tag, rebuild, run the game with the
   owner's dump, then commit the submodule bump. Keep `min_launcher_version` in
   `game.toml` honest; CMake refuses older launchers.
 - **Never commit the ROM** or any game media (`.gitignore` covers `*.crt *.bin *.prg
@@ -20,6 +20,13 @@ Repo-specific rules:
 - Verified facts (owner's dump "Gorf (USA, Europe).crt"): standard 16K cartridge,
   chip-data SHA-1 `4d24d5ed3d8b38235d9ae5965b675ffece0981cc`, joystick port 1, boots
   on the bundled Open ROMs, **NTSC** (owner compared both with `--ntsc`, Nov 2026).
+- **Recompiled build** (`GORF_RECOMP=ON -DGORF_ROM=...`, off by default): breadbin-recomp
+  is a second submodule (`external/breadbin-recomp`, tag `v0.2.0`), built as a host tool
+  with ExternalProject and run on the owner's ROM at build time (`recomp/hints.toml`
+  pins the SHA-1); output in `<build>/generated/`, passed to the launcher through
+  `BB_RECOMP_SOURCES`/`BB_RECOMP_DEPENDS`. Never commit or package that output. Check a
+  launcher or recompiler bump with the launcher's `recomp_lockstep` or a replay
+  `--verify` in both cores.
 - License: AGPL-3.0, matching the launcher.
 
 Build: `cmake -S . -B build && cmake --build build && ctest --test-dir build`.

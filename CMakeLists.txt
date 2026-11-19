@@ -21,6 +21,67 @@ set(BB_PACKAGE_README ${CMAKE_CURRENT_SOURCE_DIR}/README.md CACHE FILEPATH "" FO
 # Put the executable at the top of the build folder.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+# ---- optional: recompiled code (breadbin-recomp, launcher docs/recomp.md) ------
+# Off by default. Turned on, the build runs breadbin-recomp on YOUR Gorf dump and
+# builds the generated C into the executable. That C is derived from the ROM, so such
+# a build is for you only: it lives in the build folder, is never committed, and the
+# launcher disables packaging for it.
+option(GORF_RECOMP "Build in recompiled code generated from your own Gorf ROM (personal builds only)" OFF)
+set(GORF_ROM "" CACHE FILEPATH "Your Gorf cartridge dump (.crt), needed by GORF_RECOMP")
+if(GORF_RECOMP)
+    set(GORF_RECOMP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/breadbin-recomp)
+    if(NOT EXISTS ${GORF_RECOMP_DIR}/CMakeLists.txt)
+        message(FATAL_ERROR "The breadbin-recomp submodule is missing. Run:\n  git submodule update --init --recursive")
+    endif()
+    if(NOT GORF_ROM OR NOT EXISTS "${GORF_ROM}")
+        message(FATAL_ERROR "GORF_RECOMP needs your ROM: -DGORF_ROM=/path/to/Gorf.crt")
+    endif()
+    # The generator is a host tool: build it on its own (no clash with the launcher's targets).
+    include(ExternalProject)
+    set(_tool_dir ${CMAKE_CURRENT_BINARY_DIR}/breadbin-recomp-tool)
+    set(_tool ${_tool_dir}/bin/breadbin-recomp${CMAKE_EXECUTABLE_SUFFIX})
+    ExternalProject_Add(gorf_recomp_tool
+        SOURCE_DIR ${GORF_RECOMP_DIR}
+        BINARY_DIR ${_tool_dir}
+        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DRECOMP_BUILD_TESTS=OFF
+                   -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${_tool_dir}/bin
+                   -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=${_tool_dir}/bin
+        BUILD_COMMAND ${CMAKE_COMMAND} --build ${_tool_dir} --config Release --target breadbin-recomp
+        INSTALL_COMMAND ""
+        BUILD_BYPRODUCTS ${_tool}
+        BUILD_ALWAYS ON)
+    # Fixed shard count, so the file list is known when configuring. The hints name
+    # the dump's SHA-1: the generator refuses any other ROM, and the launcher runs the
+    # code only on that exact cartridge data (not with patch mods).
+    set(_gen ${CMAKE_CURRENT_BINARY_DIR}/generated)
+    set(_shards 8)
+    set(_outputs ${_gen}/program.c)
+    math(EXPR _last "${_shards} - 1")
+    foreach(i RANGE ${_last})
+        string(LENGTH "${i}" _len)
+        if(_len EQUAL 1)
+            set(i "00${i}")
+        elseif(_len EQUAL 2)
+            set(i "0${i}")
+        endif()
+        list(APPEND _outputs ${_gen}/shard_${i}.c)
+    endforeach()
+    add_custom_command(OUTPUT ${_outputs}
+        COMMAND ${_tool} gen "${GORF_ROM}" --hints ${CMAKE_CURRENT_SOURCE_DIR}/recomp/hints.toml
+                --shards ${_shards} -o ${_gen}
+        DEPENDS gorf_recomp_tool "${GORF_ROM}" ${CMAKE_CURRENT_SOURCE_DIR}/recomp/hints.toml
+        COMMENT "Recompiling your Gorf ROM to C (breadbin-recomp)"
+        VERBATIM)
+    add_custom_target(gorf_recomp_generate DEPENDS ${_outputs})
+    set(BB_RECOMP_SOURCES "${_outputs}" CACHE STRING "" FORCE)
+    set(BB_RECOMP_INCLUDE ${GORF_RECOMP_DIR}/runtime CACHE PATH "" FORCE)
+    set(BB_RECOMP_DEPENDS gorf_recomp_generate CACHE STRING "" FORCE)
+    message(STATUS "Gorf: recompiled code from ${GORF_ROM} (personal build: don't distribute it)")
+else()
+    set(BB_RECOMP_SOURCES "" CACHE STRING "" FORCE)
+    set(BB_RECOMP_DEPENDS "" CACHE STRING "" FORCE)
+endif()
+
 add_subdirectory(${GORF_LAUNCHER_DIR} breadbin-6502)
 
 # Refuse to build against a launcher older than the game pack requires.

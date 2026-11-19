@@ -1,3 +1,6 @@
 [submodule "external/breadbin-6502"]
 	path = external/breadbin-6502
 	url = ../breadbin-6502
+[submodule "external/breadbin-recomp"]
+	path = external/breadbin-recomp
+	url = ../breadbin-recomp
