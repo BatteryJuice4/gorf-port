@@ -1,0 +1,16 @@
+# breadbin-recomp hints for Gorf (format: breadbin-recomp/docs/hints.md).
+# Addresses and names only; no ROM bytes.
+sha1 = "4d24d5ed3d8b38235d9ae5965b675ffece0981cc"
+
+# Game-state dispatch at $8120: pushes hi ($8129,y) and lo ($8131,y), then RTS.
+[[jump_table]]
+addr  = 0x8131
+hi    = 0x8129
+count = 8
+rts   = true
+
+[names]
+"0x8009" = "cold_start"
+"0x804b" = "warm_start"
+"0x8120" = "state_dispatch"
+"0xa0b0" = "irq"
